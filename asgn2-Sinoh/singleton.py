@@ -1,7 +1,7 @@
 import sys
 
 # Finds the singleton element, if None returns None
-def unique(list, first, last):
+def singleton(list, first, last):
 
     if (first > last): # Base Case
         return None
@@ -13,15 +13,15 @@ def unique(list, first, last):
 
     if (mid % 2): # Middle index is odd
         if  (list[mid] == list[mid - 1]): # Element right of mid
-            return unique(list, mid + 1, last) 
+            return singleton(list, mid + 1, last) 
         else: # Element left of mid
-            return unique(list, first, mid - 1)
+            return singleton(list, first, mid - 1)
 
     else: # Middle index is even
         if  (list[mid] == list[mid + 1]): # Element right of mid
-            return unique(list, mid + 2, last)
+            return singleton(list, mid + 2, last)
         else: # Element left of mid
-            return unique(list, first, mid)
+            return singleton(list, first, mid)
 
 
 # Main function to run when program is called
@@ -36,7 +36,7 @@ def main():
         list[i] = (int(list[i]))
 
     # Print singleton to stdout
-    print(unique(list, 0, len(list) - 1))
+    print(singleton(list, 0, len(list) - 1))
 
 if __name__=="__main__":
     main()
