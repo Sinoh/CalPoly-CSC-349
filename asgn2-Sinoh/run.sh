@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3 ./unique.py "$1"
+python3 ./singleton.py "$1"
