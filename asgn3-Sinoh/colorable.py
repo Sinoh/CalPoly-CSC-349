@@ -3,15 +3,17 @@ from collections import defaultdict
 
 class Graph:
 
-    def __init__(self, verticies):
-        self.verticies = verticies
+    def __init__(self, vertices):
+        self.vertices = vertices
         self.graph = defaultdict(list)
-        self.discovered = [False] * verticies
-        self.color = [None] * verticies
+        self.discovered = [False] * vertices
+        self.color = [None] * vertices
 
     def addEdge(self, u, v):
         self.graph[u].append(v)
+        self.graph[u] = sorted(self.graph[u])
         self.graph[v].append(u)
+        self.graph[v] = sorted(self.graph[v])
 
     def swapColor(self, color):
         if (color == 'red'):
@@ -37,22 +39,20 @@ class Graph:
 
         for neighbors in self.graph[u]:
             if (self.discovered[neighbors] == False):
-                self.explore(neighbors, self.swapColor(color))
-
+                if (self.explore(neighbors, self.swapColor(color)) == False):
+                    return False
         return True
 
     def prepResult(self, queue):
         group1 = []
         group2 = []
-        for i in range (len(self.color)):
-            print(i, self.color[i])
-            print(self.color)
-            if (self.color[i] == None and i > 0):
+        for i in range(len(self.graph)):
+            if (self.color[list(self.graph.keys())[i]] == None and i > 0):
                 break
-            elif (self.color[i] == self.color[0]):
-                group1.append(i)
+            elif (self.color[list(self.graph.keys())[i]] == self.color[list(self.graph.keys())[0]]):
+                group1.append(list(self.graph.keys())[i])
             else:
-                group2.append(i)
+                group2.append(list(self.graph.keys())[i])
         
         queue.append(group1)
         queue.append(group2)
@@ -81,11 +81,11 @@ def main():
 
     graph = Graph(countVertex(content))
 
-    for verticies in range(len(content)):
-        if (int(content[verticies][0]) == 0):
-            graph.addEdge(int(content[verticies][0]), int(content[verticies][1]))
-        elif (int(content[verticies][0]) in graph.graph or int(content[verticies][1]) in graph.graph):
-            graph.addEdge(int(content[verticies][0]), int(content[verticies][1]))
+    for vertices in range(len(content)):
+        if (int(content[vertices][0]) == 0):
+            graph.addEdge(int(content[vertices][0]), int(content[vertices][1]))
+        elif (int(content[vertices][0]) in graph.graph or int(content[vertices][1]) in graph.graph):
+            graph.addEdge(int(content[vertices][0]), int(content[vertices][1]))
         else:
             if (graph.explore(list(graph.graph.keys())[0], 'red') == False):
                 print('Is not 2-colorable.')
@@ -93,14 +93,13 @@ def main():
             graph.prepResult(print_queue)
             graph.graph.clear()
             graph = Graph(countVertex(content))
-            graph.addEdge(int(content[verticies][0]), int(content[verticies][1]))
+            graph.addEdge(int(content[vertices][0]), int(content[vertices][1]))
             
     if (graph.explore(list(graph.graph.keys())[0], 'red') == True):
         graph.prepResult(print_queue)
     else:
         print('Is not 2-colorable.')
         exit()
-
 
     print('Is 2-colorable:')
     for i in print_queue:
