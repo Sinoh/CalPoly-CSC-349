@@ -127,6 +127,7 @@ def main():
 
     for i in print_queue:
         for j in i:
+            j = sorted(j)
             print(*j, sep=', ')
 
     file.close()
