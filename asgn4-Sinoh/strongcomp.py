@@ -48,7 +48,29 @@ def depthFirstSearch(graph):
             Explore(graph, graph.getVertex(vertex)[0], graph.getVertex(vertex)[0].vertex, path.copy() )
             graph.makeUndiscovered()
             counter += 1
-    
+
+def common_element(cycles):
+    temp1 = cycles
+    temp2 = cycles
+    for x in temp1:
+        for y in temp2:
+            if x == y:
+                continue
+            elif set(x) & set(y):
+                temp1.append(x + list(set(y) - set(x)))
+                temp1.remove(x)
+                temp1.remove(y)
+    return temp1
+
+def selectionSort(results):            
+    for i in range(len(results)):
+        min_idx = i
+        for j in range(i+1, len(results)):
+            if results[min_idx][0] > results[j][0]:
+                min_idx = j
+        results[i], results[min_idx] = results[min_idx], results[i]
+    return results
+
 def prepResult(graph):
     results = []
     single = True
@@ -57,14 +79,17 @@ def prepResult(graph):
         if cycles not in results:
             results.append(cycles)
 
+    results = common_element(results)
 
     for vertex in sorted(graph.vertices):
         for cycles in results:
             if vertex in cycles:
                 single = False
         if (single):
-            results.append(vertex)
+            results.append([vertex])
         single = True
+
+    results = selectionSort(results)
     return results
 
 def main():
@@ -92,6 +117,7 @@ def main():
     result = prepResult(graph)
     print("{} Strongly Connected Component(s):".format(len(result)))
     for i in result:
+        i = sorted(i)
         print(*i, sep=', ')
 if __name__ == "__main__":
     main()
