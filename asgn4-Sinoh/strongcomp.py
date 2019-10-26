@@ -50,38 +50,51 @@ def depthFirstSearch(graph):
             counter += 1
 
 def common_element(cycles):
-    temp1 = cycles
-    temp2 = cycles
-    for x in temp1:
-        for y in temp2:
-            if x == y:
-                continue
-            elif set(x) & set(y):
-                temp1.append(x + list(set(y) - set(x)))
-                temp1.remove(x)
-                temp1.remove(y)
-    return temp1
+
+    results = []
+    while len(cycles) > 0:
+        first, *rest = cycles
+        first = set(first)
+
+        lf = -1
+
+        while len(first) > lf:
+            lf = len(first)
+            rest2 = []
+            for r in rest:
+                if len(first.intersection(set(r))) > 0:
+                    first |= set(r)
+                else:
+                    rest2.append(r)
+            rest = rest2
+        results.append(first)
+        cycles = rest
+
+    for i in range(len(results)):
+       results[i] = list(results[i])
+    return results
 
 def selectionSort(results):            
     for i in range(len(results)):
         min_idx = i
         for j in range(i+1, len(results)):
-            if results[min_idx][0] > results[j][0]:
+            if int(results[min_idx][0]) > int(results[j][0]):
                 min_idx = j
         results[i], results[min_idx] = results[min_idx], results[i]
+        
     return results
 
 def prepResult(graph):
     results = []
     single = True
     for cycles in graph.cycles:
-        cycles = sorted(cycles)
+        cycles = sorted(map(int, cycles))
         if cycles not in results:
             results.append(cycles)
 
     results = common_element(results)
 
-    for vertex in sorted(graph.vertices):
+    for vertex in sorted(map(int, graph.vertices)):
         for cycles in results:
             if vertex in cycles:
                 single = False
@@ -117,7 +130,6 @@ def main():
     result = prepResult(graph)
     print("{} Strongly Connected Component(s):".format(len(result)))
     for i in result:
-        i = sorted(i)
         print(*i, sep=', ')
 if __name__ == "__main__":
     main()
