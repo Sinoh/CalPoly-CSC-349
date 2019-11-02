@@ -36,26 +36,21 @@ class Graph:
         for vertex in self.vertices:
             if len(self.getVertex(vertex).edges) > max:
                 max = len(self.getVertex(vertex).edges)
-        for i in range(max):
-            self.results.append([['Vertices in {}-cores:'.format(i + 1)],[]])
+        for i in range(max + 1):
+            self.results.append([['Vertices in {}-cores:'.format(i)],[]])
 
     def updateResults(self, vertex, k):
         self.results[k][1].append(int(vertex.vertex))
 
     def degreeDFS(self, vertex, k):
         vertex.discovered = True
-
         for neighbors in vertex.edges:
             neighbor = self.getVertex(neighbors)
             if vertex.degree < k:
                 neighbor.degree -= 1
             
             if neighbor.discovered == False:
-                if (self.degreeDFS(neighbor, k)):
-                    vertex.degree -= 1
-
-        if vertex.degree >= k:
-            self.updateResults(vertex,k)
+                self.degreeDFS(neighbor, k)
 
 class Vertex:
 
@@ -75,11 +70,16 @@ class Vertex:
 
 def getKCores(graph, k):
     graph.degreeDFS(graph.getVertex('0'), k)
-
+    
     for verticies in graph.vertices:
         vertex = graph.getVertex(verticies)
         if vertex.discovered == False:
             graph.degreeDFS(vertex, k)
+
+    for verticies in graph.vertices:
+        vertex = graph.getVertex(verticies)
+        if vertex.degree >= k:
+            graph.updateResults(vertex,k)
 
 def main():
 
@@ -100,14 +100,19 @@ def main():
             graph.getVertex(vertex0.vertex).addEdge(graph.getVertex(vertex1.vertex))
     
     graph.preResults()
-    for i in range(len(graph.results)):
+    graph.updateDegree()
+
+    for i in range(0, len(graph.results)):
         getKCores(graph, i)
         graph.makeUndiscovered()
         graph.updateDegree()
-    for results in graph.results:
-        if len(results[1]) > 0:
-            print(results[0][0])
-            print(*sorted(results[1]), sep=', ')
+    
+    for index in range(len(graph.results)):
+        if index == 0:
+            continue
+        if len(graph.results[index][1]) > 0:
+            print(graph.results[index][0][0])
+            print(*sorted(graph.results[index][1]), sep=', ')
 
         
 if __name__ == "__main__":

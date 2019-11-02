@@ -1,9 +1,0 @@
-.DS_Store
-*.icloud
-*.swp
-*.pyc
-__pycache__
-.mypy_cache
-.coverage
-*.class
-META-INF
